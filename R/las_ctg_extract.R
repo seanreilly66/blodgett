@@ -58,11 +58,11 @@ laz_files <- list.files(
   full.names = T
 )
 
-# las_files <- list.files(
-#   path = las_folder,
-#   pattern = '.las$',
-#   full.names = T
-# ) 
+las_files <- list.files(
+  path = las_folder,
+  pattern = '.las$',
+  full.names = T
+)
 # 
 # prog <- laz_files[!(laz_files %in% str_replace(las_files, 'las$', 'laz'))] %>%
 #   sample()
@@ -95,24 +95,6 @@ opt_output_files(ctg) <- 'data/las/als/bldgt_als18_{id}'
 x <- clip_roi(ctg, boundary)
 
 
-#
 
-als <- list.files(path = 'data/las/als',
-                  pattern = '.las$',
-                  full.names = T)
-
-i = 1
-
-x = readLAS(als[i]) %>%
-  filter_duplicates() %>%
-  filter_poi(Classification != 7, Classification != 18) %>%
-  normalize_height(tin()) 
-
-ttop <- locate_trees(x, lmf(ws = 5))
-
-p <- plot(x, bg = "white", size = 4)
-add_treetops3d(p, ttop)
-
-# Look at variable window size by height
 
 
