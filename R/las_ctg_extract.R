@@ -41,12 +41,12 @@ library(glue)
 
 # Files
 
-las_folder <- 'data/las/als/raw/ctg'
+las_folder <- 'data/las/als_2022/raw/ctg'
 file_ext <- '.laz$'
 shp_file <- 'data/gis/BlodgettFFS_UnitBoundaries/FFS_COMPS_only_Alb83.shp'
 
 # Output
-file_skeleton <- 'data/las/als/bldgt_als_{id}.las'
+file_skeleton <- 'data/las/als_2022/bldgt_als22_{id}'
 
 
 
@@ -64,8 +64,8 @@ las_files <- list.files(
   full.names = T
 )
 # 
-# prog <- laz_files[!(laz_files %in% str_replace(las_files, 'las$', 'laz'))] %>%
-#   sample()
+prog <- laz_files[!(laz_files %in% str_replace(las_files, 'las$', 'laz'))] %>%
+  sample()
 
 
 
@@ -90,9 +90,9 @@ ctg <- list.files(
 boundary <- st_read(shp_file) %>%
   st_transform(st_crs(ctg))
 
-opt_output_files(ctg) <- 'data/las/als/bldgt_als18_{id}'
+opt_output_files(ctg) <- file_skeleton
 
-x <- clip_roi(ctg, boundary)
+clip_roi(ctg, boundary)
 
 
 
