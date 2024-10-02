@@ -41,7 +41,7 @@ stem_map_folder <- 'data/field_stem_maps/connie_stem_maps'
 
 # ================================ Tree metrics ================================ 
 
-h_eq<- function(eq_type, a, b, dbh = dbh_cm) {
+h_eq <- function(eq_type, a, b, dbh) {
   
   # Equations from John Battles, personal communication
   # DBH in cm
@@ -77,13 +77,13 @@ tree_calc <- function(species, dbh_cm, dbh_in) {
   if (species == 'DF') {
     
     crrad_m <- 1.6654 + 0.0355*dbh_cm
-    h_m <- h_eq('siccama', a = 77.7282, b = 0.0088)
+    h_m <- h_eq('siccama', a = 77.7282, b = 0.0088, dbh = dbh_cm)
     
     
   } else if (species == 'IC') {
     
     crrad_m <- 1.2960 + 0.0256*dbh_cm
-    h_m <- h_eq('power', a = 0.7171, b = 0.8832)
+    h_m <- h_eq('power', a = 0.7171, b = 0.8832, dbh = dbh_cm)
     
 
   # } else if (species == 'LP') {
@@ -102,7 +102,7 @@ tree_calc <- function(species, dbh_cm, dbh_in) {
   } else if (species == 'PP') {
     
     crrad_m <- 0.9488 + 0.0356*dbh_cm
-    h_m <- h_eq('power', a = 0.5956, b = 0.9758)
+    h_m <- h_eq('power', a = 0.5956, b = 0.9758, dbh = dbh_cm)
     
   # } else if (species == 'RF') {
   #   
@@ -115,32 +115,33 @@ tree_calc <- function(species, dbh_cm, dbh_in) {
   } else if (species == 'SP') {
     
     crrad_m <- 0.9906 + 0.0398*dbh_cm
-    h_m <- h_eq('siccama', a = 161.0388, b = 0.0033)
+    h_m <- h_eq('siccama', a = 161.0388, b = 0.0033, dbh = dbh_cm)
     
     
   } else if (species == 'WF') {
     
     crrad_m <- 1.2256 + 0.0299*dbh_cm
-    h_m <- h_eq('siccama', a = 109.7001, b = 0.0058)
+    h_m <- h_eq('siccama', a = 109.7001, b = 0.0058, dbh = dbh_cm)
     
   # Bechtold 2004
     
   } else if (species == 'BO') {
     
-    crrad_ft <- 7.0284 + 1.0470*dbh_in 
-    crrad_m <- crrad_ft * 0.3048 / 2
-    h_m <- h_eq('siccama', a = 35.2608, b = 0.0206)
+    crdiam_ft <- 7.0284 + 1.0470*dbh_in 
+    crrad_m <- crdiam_ft * 0.3048 / 2
+    h_m <- h_eq('siccama', a = 35.2608, b = 0.0206, dbh = dbh_cm)
     
   } else if (species == 'TO') {
     
-    crrad_ft <- 6.7864 + 0.8443*dbh_in
-    crrad_m <- crrad_ft * 0.3048 / 2
-    h_m <- h_eq('siccama', a = 51.3747, b = 0.0111)
+    crdiam_ft <- 6.7864 + 0.8443*dbh_in
+    crrad_m <- crdiam_ft * 0.3048 / 2
+    h_m <- h_eq('siccama', a = 51.3747, b = 0.0111, dbh = dbh_cm)
     
     
   } else {
     
     crrad_m <- NA
+    h_m <- NA
     
   }
   
@@ -188,7 +189,8 @@ stem_map <- stem_map %>%
   rowwise() %>%
   mutate(
     tree_calc(species = species, dbh_cm = dbh_cm, dbh_in = dbh_in) |>
-      rename(crrad_m_rep = crrad_m)
+      rename(crad_m_rep = crrad_m),
+    .before = 'geometry'
   ) 
 
 st_write(stem_map, 
