@@ -38,6 +38,7 @@ library(doParallel)
 # ================================= User inputs ================================
 
 als_folder <- 'data/las/als_2022'
+id <- 'bldgt_als.+hnorm_tin\\.las'
 
 stem_map_folder <- 'data/field_stem_maps'
 
@@ -78,17 +79,14 @@ foreach(
   # ===================================== ALS ====================================
   
   als_files <- list.files(path = als_folder,
-                          pattern = '.las$',
+                          pattern = id,
                           full.names = T)
   
   als_yr <- str_extract(als_folder, '[:digit:]{2}$')
   
   als_c <- als_files %>%
     str_subset(glue('c{test_compartment}')) %>%
-    readLAS() %>%
-    filter_duplicates() %>%
-    filter_poi(Classification != 7, Classification != 18) %>% # Remove errors
-    normalize_height(tin())
+    readLAS()
   
   crs <- st_crs(als_c)
   
@@ -120,7 +118,7 @@ foreach(
   
   # f_exp <- mosaic::fitModel(crrad_m ~ A + B * h_m ^ C,  data = stem_map)
   # summary(f_exp)
-  
+
   f_lm <- lm(crrad_m ~ h_m, data = stem_map)
   summary(f_lm)
   
