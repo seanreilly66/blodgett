@@ -50,7 +50,7 @@ library(future)
 tree_poly_folder <- 'data/tree_seg/testing/lmf'
 tree_poly_id = 'lmf\\.shp'
 
-tree_z_thresh = 3
+tree_z_thresh = 5
 
 chm_folder <- 'data/chm'
 chm_id <- 'als22_c{comp}.+p2r_025\\.tif$'
@@ -103,18 +103,18 @@ df <- foreach(
   
   names(chm) <- 'chm_z'
   
-  chm_diff <- list.files(chm_diff_folder,
-                         pattern = glue(chm_diff_id),
-                         full.names = T) %>%
-    rast()
-  
-  names(chm_diff) <- 'chm_diff'
-  
-  chm_stack = c(chm, chm_diff)
+  # chm_diff <- list.files(chm_diff_folder,
+  #                        pattern = glue(chm_diff_id),
+  #                        full.names = T) %>%
+  #   rast()
+  # 
+  # names(chm_diff) <- 'chm_diff'
+  # 
+  # chm_stack = c(chm, chm_diff)
   
   # Extract values
   
-  sf <- terra::extract(chm_stack, sf, method = 'simple') %>%
+  sf <- terra::extract(chm, sf, method = 'simple') %>%
     nest(.by = ID, .key = 'chm') %>%
     left_join(sf, .)
   
@@ -175,38 +175,38 @@ df <- df %>%
   )) %>%
   unnest(sm_stats)
 
-# group_stats <- df %>%
-#   group_by(
-#     n_tree = sm_n > 0
-#   ) %>%
-#   summarize(
-#     n_trees = n(),
-#     mean_pts = mean(npoints),
-#     min_pts = min(npoints),
-#     max_pts = max(npoints),
-#     mean_sm_trees = mean(sm_n),
-#     min_sm_trees = min(sm_n),
-#     max_sm_trees = max(sm_n),
-#     mean_sm_z = mean(sm_z_dif, na.rm = T),
-#     min_sm_z = min(sm_z_dif, na.rm = T),
-#     max_sm_z = max(sm_z_dif, na.rm = T)
-#   )
+group_stats <- df %>%
+  group_by(
+    n_tree = sm_n > 0
+  ) %>%
+  summarize(
+    n_trees = n(),
+    mean_pts = mean(npoints),
+    min_pts = min(npoints),
+    max_pts = max(npoints),
+    mean_sm_trees = mean(sm_n),
+    min_sm_trees = min(sm_n),
+    max_sm_trees = max(sm_n),
+    mean_sm_z = mean(sm_z_dif, na.rm = T),
+    min_sm_z = min(sm_z_dif, na.rm = T),
+    max_sm_z = max(sm_z_dif, na.rm = T)
+  )
+
+true_seg <- df %>%
+  filter(
+    sm_n > 0,
+    sm_z_dif < -0.1 * Z | is.na(sm_z_dif) | sm_z_dif < -1
+  ) %>%
+  select(-chm, -stem_map)
 # 
-# true_seg <- df %>%
-#   filter(
-#     sm_n > 0,
-#     sm_z_dif < -0.1 * Z | is.na(sm_z_dif)
-#   ) %>%
-#   select(-chm, -stem_map)
+st_write(true_seg, 'data/tree_seg/testing/true_seg_2.shp', append = FALSE)
 # 
-# st_write(true_seg, 'data/tree_seg/testing/true_seg.shp', append = FALSE)
-# 
-# ggplot(data = true_seg, 
-#        mapping = aes(x = Z,
-#                      y = npoints)) +
-#   geom_point() +
-#   geom_hline(yintercept = 100) +
-#   theme_classic()
+ggplot(data = true_seg,
+       mapping = aes(x = Z,
+                     y = npoints)) +
+  geom_point() +
+  geom_hline(yintercept = 100) +
+  theme_classic()
 
 
 # ==============================================================================
