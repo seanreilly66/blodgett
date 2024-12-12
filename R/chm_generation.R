@@ -40,7 +40,7 @@ als_folder <- 'data/las'
 start_pattern <- 'bldgt_als'
 
 dtm_resolution <- 1
-chm_resolution <- 0.5
+chm_resolution <- 0.25
 
 subcircle_r <- 0.2
 
