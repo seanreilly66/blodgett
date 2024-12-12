@@ -42,6 +42,8 @@ id <- 'bldgt_als.+hnorm_tin\\.las'
 
 stem_map_file <- 'data/field_stem_maps/bldgt_field_stem_pts.shp'
 
+tree_seg_output <- 'data/tree_seg/lmf/als{als_yr}_c{comp}_t{treat}_treeseg_lmf.shp'
+
 # ==============================================================================
 # ================================ Stem map eq =================================
 # ==============================================================================
@@ -74,22 +76,20 @@ foreach(
   
   comp <- str_extract(file_c, '(?<=_c)[:digit:]+')
   
+  treat <- str_extract(file_c, '(?<=_t)[:alpha:]+')
+  
   als_c <- readLAS(file_c)
   
   crs <- st_crs(als_c)
-  
-  # ==============================================================================
-  # ========================= Testing tree segmentation ==========================
-  # ==============================================================================
 
   kernel <- matrix(1, 3, 3)
   chm_c <- rasterize_canopy(als_c, 0.25, p2r(subcircle = 0.2), pkg = "terra") %>%
     terra::focal(w = kernel, fun = median, na.rm = TRUE)
   
-  terra::writeRaster(
-    chm_c, 
-    glue('data/tree_seg/chm/als{als_yr}_c{comp}_chm.tif'),
-    overwrite = T)
+  # terra::writeRaster(
+  #   chm_c, 
+  #   glue('data/tree_seg/chm/als{als_yr}_c{comp}_t{treat}_chm.tif'),
+  #   overwrite = T)
   
   # ------------------------------------------------------------------------------
   # -------------- LMF with lm function from height to radius ratio --------------
@@ -103,7 +103,7 @@ foreach(
   crown_poly_lmf <- crown_metrics(als_seg, func = .stdtreemetrics, geom = "convex")
 
   st_write(crown_poly_lmf,
-           glue('data/tree_seg/lmf/als{als_yr}_c{comp}_lmf_chm.shp'),
+           glue(tree_seg_output),
            overwrite = T)
   
 }
