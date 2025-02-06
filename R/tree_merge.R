@@ -49,7 +49,7 @@ tree_poly_id = 'als{als_yr}.+treeseg_lmf\\.shp$'
 chm_folder <- 'data/chm'
 chm_id <- 'als{als_yr}_c{compartment}_t{treatment}_chm_p2r_025\\.tif$'
 
-site_boundary <- 'data/gis/ffs_10m_buffer.shp'
+site_boundary <- 'data/gis/ffs_comp.shp'
 
 # Polygon filter thresholds
 
@@ -59,8 +59,8 @@ n_point_thresh = 10
 
 # Output
 
-comp_output <- 'data/tree_seg/merged_crowns/bldgt_als{als_yr}_c{compartment}_t{treatment}_merged_crowns.shp'
-combined_output <- 'data/tree_seg/bldgt_als{als_yr}_merged_crowns.shp'
+comp_output <- 'data/tree_seg/merged_crowns/bldgt_ffs_als{als_yr}_c{compartment}_t{treatment}_merged_crowns.shp'
+combined_output <- 'data/tree_seg/bldgt_ffs_als{als_yr}_merged_crowns.shp'
 
 # ==============================================================================
 # ======================== Similarity testing function =========================
