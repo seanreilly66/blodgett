@@ -46,7 +46,8 @@ chm_id <- 'bldgt_als22_.+_chm_p2r_025\\.tif$'
 
 study_shp <- 'data/gis/ffs_10m_buffer.shp'
 
-gap_output <- 'data/canopy_gaps/bldgt_als22_c{comp}_t{treatment}_{type}_thresh{threshold}.{ext}'
+gap_output <- 'bldgt_als22_c{comp}_t{treatment}_{type}_thresh{threshold}.{ext}'
+gap_folder <- 'data/canopy_gaps'
 
 threshold_heights <- c(1, 3, 5, 10)
 size <- c(1, 10^10)
@@ -58,7 +59,6 @@ size <- c(1, 10^10)
 
 chm_files <- list.files(chm_folder, pattern = chm_id, full.names = T)
 
-output_files <- c()
 i = 1
 
 for (chm_i in chm_files) {
@@ -95,8 +95,10 @@ for (chm_i in chm_files) {
       merge(gap_stats, by = 'gap_id') %>%
       st_as_sf()
     
-    shp_output <- glue(gap_output, type = 'gapstatshp', ext = 'shp')
-    rast_output <- glue(gap_output, type = 'gaprast', ext = 'tif')
+    shp_output <- glue(gap_folder, '/',
+                       glue(gap_output, type = 'gapstatshp', ext = 'shp'))
+    rast_output <- glue(gap_folder, '/',
+                        glue(gap_output, type = 'gaprast', ext = 'tif'))
     
     writeRaster(gap_rast, 
                 filename = rast_output,
@@ -105,15 +107,18 @@ for (chm_i in chm_files) {
     st_write(gap_shp,
              dsn = shp_output,
              quiet = T)
-    
-    output_files <- c(output_files, shp_output, rast_output)
-    
+
   }
   
   i <- i + 1
   
 }
 
+# ==============================================================================
+# ============================ Merged shape dataset ============================
+# ==============================================================================
+
+shp_files <- list.files(gap_folder, pattern = '.shp$', full.names = T)
 
 # ==============================================================================
 # ==============================================================================
