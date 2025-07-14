@@ -81,13 +81,13 @@ las_cld_metrics <- function(z, r) {
   # cc1r = list_c(first_return_metrics)
   # 
   # if (sum(cc1r == 0) == 4) {
-  #   
+  # 
   #   cc1r = rep(-9999, 4)
-  #   
+  # 
   # } else {
-  #   
+  # 
   #   cc1r = cc1r[1:max(which(cc1r > 0))]
-  #   
+  # 
   # }
   # 
   # val = ((sum((cc1r/sum(cc1r)) ^ 2) * length(cc1r)) ^ -1) * mean(cc1r)
